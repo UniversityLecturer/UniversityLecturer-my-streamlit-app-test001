@@ -7,7 +7,7 @@ if "step" not in st.session_state:
     st.session_state.sleep = ""
     st.session_state.result = ""
 
-st.title("health check")
+st.title("Health Check")
 st.caption("人事アプリ")
 
 # ステップ1：質問1
