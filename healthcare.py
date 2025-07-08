@@ -10,6 +10,19 @@ if "step" not in st.session_state:
 st.title("ストレスチェックチャットボット")
 st.caption("Stress Check Chatbot")
 
+# カスタムCSSでradioの折り返し防止
+st.markdown("""
+<style>
+/* 選択肢を横並びでキープ（flex wrap防止） */
+div[data-baseweb="radio"] > div {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 2rem;
+    flex-wrap: nowrap !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # ステップ1：質問1
 if st.session_state.step == 1:
     st.subheader("01. 最近、疲れていますか？")
@@ -19,11 +32,10 @@ if st.session_state.step == 1:
     with col_left:
         st.markdown("あなたの回答を選んでください：")
         stress = st.radio(
-            label="疲れていますか？",
+            label="",
             options=["yes", "no"],
             horizontal=True,
-            key="q1",
-            label_visibility="collapsed"
+            key="q1"
         )
         if st.button("次へ", key="to_step2"):
             st.session_state.stress = stress
@@ -46,11 +58,10 @@ elif st.session_state.step == 2:
     with col_left:
         st.markdown("あなたの回答を選んでください：")
         sleep = st.radio(
-            label="睡眠は足りていますか？",
+            label="",
             options=["yes", "no"],
             horizontal=True,
-            key="q2",
-            label_visibility="collapsed"
+            key="q2"
         )
         if st.button("診断する", key="to_result"):
             st.session_state.sleep = sleep
