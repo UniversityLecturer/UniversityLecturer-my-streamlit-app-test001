@@ -14,7 +14,7 @@ st.caption("Stress Check Chatbot")
 st.markdown("""
 <style>
 .custom-button-wrapper {
-    width: 60%;
+    width: 70%;
     margin: auto;
 }
 .custom-button-wrapper > div {
