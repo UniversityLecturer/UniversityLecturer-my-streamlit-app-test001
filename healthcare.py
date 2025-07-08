@@ -7,7 +7,7 @@ if "step" not in st.session_state:
     st.session_state.sleep = ""
     st.session_state.result = ""
 
-st.title("Stress Check Chatbot")
+st.title("health check")
 st.caption("人事アプリ")
 
 # ステップ1：質問1
@@ -65,7 +65,7 @@ elif st.session_state.step == 2:
 
 # ステップ3：結果表示
 elif st.session_state.step == 3:
-    st.subheader("あなたのストレス診断結果")
+    st.subheader("あなたのヘルスケア診断結果")
     st.text(st.session_state.result)
 
     if st.button("最初に戻る"):
