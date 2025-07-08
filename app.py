@@ -88,4 +88,3 @@ else:
     if st.button("最初からやり直す"):
         st.session_state.clear()
         st.experimental_rerun()
-
