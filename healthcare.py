@@ -6,7 +6,6 @@ if "step" not in st.session_state:
     st.session_state.stress = ""
     st.session_state.sleep = ""
     st.session_state.result = ""
-    st.session_state.submitted = False  # 再実行用のトリガー
 
 st.title("ストレスチェックチャットボット")
 st.caption("Stress Check Chatbot")
@@ -18,8 +17,14 @@ if st.session_state.step == 1:
 
     col_left, _ = st.columns([1, 5])
     with col_left:
-        stress = st.radio("あなたの回答を選んでください", ["yes", "no"], key="q1")
-
+        st.markdown("あなたの回答を選んでください：")
+        stress = st.radio(
+            label="疲れていますか？",
+            options=["yes", "no"],
+            horizontal=True,
+            key="q1",
+            label_visibility="collapsed"
+        )
         if st.button("次へ", key="to_step2"):
             st.session_state.stress = stress
             if stress == "yes":
@@ -39,8 +44,14 @@ elif st.session_state.step == 2:
 
     col_left, _ = st.columns([1, 5])
     with col_left:
-        sleep = st.radio("あなたの回答を選んでください", ["yes", "no"], key="q2")
-
+        st.markdown("あなたの回答を選んでください：")
+        sleep = st.radio(
+            label="睡眠は足りていますか？",
+            options=["yes", "no"],
+            horizontal=True,
+            key="q2",
+            label_visibility="collapsed"
+        )
         if st.button("診断する", key="to_result"):
             st.session_state.sleep = sleep
             if sleep == "yes":
@@ -56,7 +67,7 @@ elif st.session_state.step == 2:
             st.session_state.step = 3
             st.rerun()
 
-# ステップ3：診断結果表示
+# ステップ3：診断結果
 elif st.session_state.step == 3:
     st.subheader("あなたのストレス診断結果")
     st.text(st.session_state.result)
