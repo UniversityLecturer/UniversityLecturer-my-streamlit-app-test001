@@ -44,35 +44,35 @@ if "step" not in st.session_state:
     st.session_state.answers = []
     st.session_state.feedbacks = []
 
-st.title("Job hunting practice｜就活練習")
+st.title("就活準備チャット（フォーム囲いなし）")
 
 step = st.session_state.step
 
-# CSS：入力欄の枠線を削除（課題②対応）
+# ✅ フォーム全体の囲いをCSSで非表示
 st.markdown("""
 <style>
-input[type="text"] {
+/* st.form に自動で付与される囲い（div[data-testid="stForm"]）を非表示に */
+div[data-testid="stForm"] {
+    background-color: transparent !important;
     border: none !important;
-    outline: none !important;
     box-shadow: none !important;
-    background-color: #f9f9f9;
-    padding: 8px;
+    padding: 0 !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 質問の表示と回答フォーム（1問ずつ）
+# 質問の表示と入力フォーム
 if step < len(questions):
     jp_q, en_q = questions[step]
 
     st.write(f"Q{step+1}: {jp_q}")
-    st.write(f"*{en_q}*")
+    st.caption(en_q)
 
-    form = st.form(key="answer_form", clear_on_submit=True)
-    user_input = form.text_input("", key=f"input_{step}")
-    col1, col2 = form.columns([6, 1])
-    with col2:
-        submitted = col2.form_submit_button("次へ")
+    with st.form(key="answer_form", clear_on_submit=True):
+        user_input = st.text_input("あなたの答えを入力してください", key=f"input_{step}")
+        col1, col2 = st.columns([6, 1])
+        with col2:
+            submitted = st.form_submit_button("次へ")
 
     if submitted and user_input.strip():
         st.session_state.answers.append(user_input)
@@ -83,7 +83,7 @@ if step < len(questions):
     elif submitted:
         st.warning("入力してください。")
 
-# 質問終了後：まとめページ
+# 回答がすべて完了したらまとめを表示
 else:
     st.header("あなたの就活プロフィールまとめ")
 
