@@ -43,9 +43,8 @@ if "step" not in st.session_state:
     st.session_state.step = 0
     st.session_state.answers = []
     st.session_state.feedbacks = []
-    st.session_state.last_input = ""
 
-st.title("就活準備チャット（アイコンなし）")
+st.title("Job hunting practice｜就活練習")
 
 step = st.session_state.step
 
@@ -53,14 +52,14 @@ step = st.session_state.step
 if step < len(questions):
     jp_q, en_q = questions[step]
 
-    st.markdown(f"**Q{step+1}:** {jp_q}  \n*{en_q}*")
+    st.write(f"Q{step+1}: {jp_q}")
+    st.write(f"*{en_q}*")
 
-    # 回答入力フォーム
-    with st.form(key="answer_form", clear_on_submit=True):  # 課題①：送信後にクリア
-        user_input = st.text_input("あなたの答えを入力してください")
-        col1, col2 = st.columns([6, 1])  # 課題③：ボタン右寄せ
+    with st.form(key="answer_form", clear_on_submit=True):
+        user_input = st.text_input(" ")
+        col1, col2 = st.columns([6, 1])
         with col2:
-            submitted = st.form_submit_button("次へ")  # 文言変更
+            submitted = st.form_submit_button("次へ")
 
     if submitted and user_input.strip():
         st.session_state.answers.append(user_input)
@@ -71,26 +70,18 @@ if step < len(questions):
     elif submitted:
         st.warning("入力してください。")
 
-# すべての質問が完了したら結果まとめ
+# 回答終了後のまとめ表示
 else:
     st.header("あなたの就活プロフィールまとめ")
 
     for i in range(len(questions)):
         jp_q, en_q = questions[i]
-        st.markdown(f"**Q{i+1}:** {jp_q}  \n*{en_q}*")
-        st.markdown(
-            f"""
-            <div style="background-color:#f0f2f6; padding:10px; border-radius:10px; margin-bottom:5px; color:#000;">
-            <strong>あなたの回答:</strong><br>{st.session_state.answers[i]}
-            </div>
-            <div style="background-color:#e2f4ea; padding:10px; border-radius:10px; margin-bottom:20px; color:#000;">
-            <strong>フィードバック:</strong><br>{st.session_state.feedbacks[i][0]}<br><i>{st.session_state.feedbacks[i][1]}</i>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.subheader(f"Q{i+1}: {jp_q}")
+        st.caption(en_q)
+        st.markdown(f"**あなたの回答:** {st.session_state.answers[i]}")
+        fb_jp, fb_en = st.session_state.feedbacks[i]
+        st.markdown(f"**フィードバック:**\n{fb_jp}\n\n*{fb_en}*")
 
     if st.button("最初からやり直す"):
-        for key in ["step", "answers", "feedbacks", "last_input"]:
-            st.session_state.pop(key, None)
-        st.experimental_rerun()
+        st.session_state.clear()  # 課題①：初期化だけでなく次に進ませないよう一度 rerun
+        st.rerun()
