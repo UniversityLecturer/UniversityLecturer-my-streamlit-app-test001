@@ -46,6 +46,7 @@ if "step" not in st.session_state:
     st.session_state.last_input = ""
 
 st.title("Job hunting practice")
+st.caption("面談練習アプリ")
 
 # 質問ステップの表示
 step = st.session_state.step
@@ -69,7 +70,7 @@ if step < len(questions):
 
 else:
     st.markdown("---")
-    st.header("あなたの就活プロフィールまとめ")
+    st.header("あなたのまとめ")
 
     for i, (jp_q, _) in enumerate(questions):
         st.subheader(f"Q{i+1}: {jp_q}")
