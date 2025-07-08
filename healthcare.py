@@ -6,56 +6,63 @@ if "step" not in st.session_state:
     st.session_state.stress = ""
     st.session_state.sleep = ""
     st.session_state.result = ""
+    st.session_state.clicked = None
 
 st.title("ストレスチェックチャットボット")
-st.caption("Stress Check Chatbot")
 
-# カスタムボタンCSS：列内60%幅にして中央寄せ
+# カスタムCSSで幅とレイアウト制御
 st.markdown("""
 <style>
-.custom-button-wrapper {
-    width: 70%;
-    margin: auto;
-}
-.custom-button-wrapper > div {
+.button-row {
     display: flex;
     justify-content: center;
+    gap: 40px;
+    margin-top: 1em;
+}
+.button-row form {
+    width: 60%;
+    text-align: center;
+}
+button {
+    width: 100%;
+    padding: 0.5em 1em;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #2c6ed5;
+    color: white;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #1f4fbf;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# 共通：yes/no 横並び選択ボタン（60%幅）
-def render_yes_no_buttons(key_prefix):
+def render_custom_buttons(question_key):
+    st.markdown('<div class="button-row">', unsafe_allow_html=True)
     col1, col2 = st.columns([1, 1])
-    selected = None
 
     with col1:
-        with st.container():
-            st.markdown('<div class="custom-button-wrapper">', unsafe_allow_html=True)
-            if st.button("yes", key=f"{key_prefix}_yes"):
-                selected = "yes"
-            st.markdown('</div>', unsafe_allow_html=True)
-
+        if st.form(key=f"{question_key}_yes_form").form_submit_button("yes"):
+            return "yes"
     with col2:
-        with st.container():
-            st.markdown('<div class="custom-button-wrapper">', unsafe_allow_html=True)
-            if st.button("no", key=f"{key_prefix}_no"):
-                selected = "no"
-            st.markdown('</div>', unsafe_allow_html=True)
+        if st.form(key=f"{question_key}_no_form").form_submit_button("no"):
+            return "no"
 
-    return selected
+    st.markdown('</div>', unsafe_allow_html=True)
+    return None
 
-# Step 1：質問① 疲れているか
+# ステップ1
 if st.session_state.step == 1:
     st.subheader("01. 最近、疲れていますか？")
     st.caption("Are you tired recently?")
     st.markdown("あなたの回答を選んでください：")
+    choice = render_custom_buttons("stress")
 
-    answer = render_yes_no_buttons("stress")
-
-    if answer:
-        st.session_state.stress = answer
-        if answer == "yes":
+    if choice:
+        st.session_state.stress = choice
+        if choice == "yes":
             st.session_state.step = 2
         else:
             st.session_state.result = (
@@ -65,17 +72,16 @@ if st.session_state.step == 1:
             st.session_state.step = 3
         st.rerun()
 
-# Step 2：質問② 睡眠足りてるか
+# ステップ2
 elif st.session_state.step == 2:
     st.subheader("02. 睡眠時間は足りていますか？")
     st.caption("Do you get enough sleep?")
     st.markdown("あなたの回答を選んでください：")
+    choice = render_custom_buttons("sleep")
 
-    answer = render_yes_no_buttons("sleep")
-
-    if answer:
-        st.session_state.sleep = answer
-        if answer == "yes":
+    if choice:
+        st.session_state.sleep = choice
+        if choice == "yes":
             st.session_state.result = (
                 "■ 軽(かる)い疲(つか)れですね。少(すこ)しリフレッシュしましょう！\n"
                 "You have mild fatigue. Let's refresh a bit!"
@@ -88,7 +94,7 @@ elif st.session_state.step == 2:
         st.session_state.step = 3
         st.rerun()
 
-# Step 3：診断結果
+# ステップ3
 elif st.session_state.step == 3:
     st.subheader("あなたのストレス診断結果")
     st.text(st.session_state.result)
