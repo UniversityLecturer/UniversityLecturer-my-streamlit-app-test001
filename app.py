@@ -1,6 +1,6 @@
 import streamlit as st
 
-# 質問リスト（日本語＋英語）
+# 質問リスト（日＋英）
 questions = [
     ("あなたの強みはなんですか？", "What are your strengths?"),
     ("あなたの弱点はなんですか？", "What are your weaknesses?"),
@@ -38,7 +38,7 @@ def generate_feedback(question, answer):
             "Your idea is interesting. Giving more details will help others understand you better."
         )
 
-# セッション初期化
+# セッション状態の初期化
 if "step" not in st.session_state:
     st.session_state.step = 0
     st.session_state.answers = []
@@ -48,29 +48,42 @@ st.title("Job hunting practice｜就活練習")
 
 step = st.session_state.step
 
-# 質問の表示
+# CSS：入力欄の枠線を削除（課題②対応）
+st.markdown("""
+<style>
+input[type="text"] {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background-color: #f9f9f9;
+    padding: 8px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# 質問の表示と回答フォーム（1問ずつ）
 if step < len(questions):
     jp_q, en_q = questions[step]
 
     st.write(f"Q{step+1}: {jp_q}")
     st.write(f"*{en_q}*")
 
-    with st.form(key="answer_form", clear_on_submit=True):
-        user_input = st.text_input(" ")
-        col1, col2 = st.columns([6, 1])
-        with col2:
-            submitted = st.form_submit_button("次へ")
+    form = st.form(key="answer_form", clear_on_submit=True)
+    user_input = form.text_input("", key=f"input_{step}")
+    col1, col2 = form.columns([6, 1])
+    with col2:
+        submitted = col2.form_submit_button("次へ")
 
     if submitted and user_input.strip():
         st.session_state.answers.append(user_input)
         fb_jp, fb_en = generate_feedback(jp_q, user_input)
         st.session_state.feedbacks.append((fb_jp, fb_en))
         st.session_state.step += 1
-        st.success("回答が記録されました。")
+        st.rerun()
     elif submitted:
         st.warning("入力してください。")
 
-# 回答終了後のまとめ表示
+# 質問終了後：まとめページ
 else:
     st.header("あなたの就活プロフィールまとめ")
 
@@ -83,5 +96,5 @@ else:
         st.markdown(f"**フィードバック:**\n{fb_jp}\n\n*{fb_en}*")
 
     if st.button("最初からやり直す"):
-        st.session_state.clear()  # 課題①：初期化だけでなく次に進ませないよう一度 rerun
+        st.session_state.clear()
         st.rerun()
