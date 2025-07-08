@@ -6,7 +6,6 @@ if "step" not in st.session_state:
     st.session_state.stress = ""
     st.session_state.sleep = ""
     st.session_state.result = ""
-    st.session_state.submitted = False  # 再実行用のトリガー
 
 st.title("ストレスチェックチャットボット")
 st.caption("Stress Check Chatbot")
@@ -16,10 +15,16 @@ if st.session_state.step == 1:
     st.subheader("01. 最近、疲れていますか？")
     st.caption("Are you tired recently?")
 
-    col_left, _ = st.columns([1, 5])
-    with col_left:
-        stress = st.radio("あなたの回答を選んでください", ["yes", "no"], key="q1")
-
+    # レイアウト：右寄せカラムにラベルとボタン配置
+    _, col_right = st.columns([4, 1])
+    with col_right:
+        st.markdown("**あなたの回答を選んでください。**", unsafe_allow_html=True)
+        stress = st.radio(
+            label="",
+            options=["yes", "no"],
+            horizontal=True,
+            key="q1"
+        )
         if st.button("次へ", key="to_step2"):
             st.session_state.stress = stress
             if stress == "yes":
@@ -37,10 +42,15 @@ elif st.session_state.step == 2:
     st.subheader("02. 睡眠時間は足りていますか？")
     st.caption("Do you get enough sleep?")
 
-    col_left, _ = st.columns([1, 5])
-    with col_left:
-        sleep = st.radio("あなたの回答を選んでください", ["yes", "no"], key="q2")
-
+    _, col_right = st.columns([4, 1])
+    with col_right:
+        st.markdown("**あなたの回答を選んでください。**", unsafe_allow_html=True)
+        sleep = st.radio(
+            label="",
+            options=["yes", "no"],
+            horizontal=True,
+            key="q2"
+        )
         if st.button("診断する", key="to_result"):
             st.session_state.sleep = sleep
             if sleep == "yes":
@@ -56,13 +66,13 @@ elif st.session_state.step == 2:
             st.session_state.step = 3
             st.rerun()
 
-# ステップ3：診断結果表示
+# ステップ3：結果表示
 elif st.session_state.step == 3:
     st.subheader("あなたのストレス診断結果")
     st.text(st.session_state.result)
 
-    col_left, _ = st.columns([1, 5])
-    with col_left:
+    _, col_right = st.columns([4, 1])
+    with col_right:
         if st.button("最初に戻る", key="reset"):
             st.session_state.step = 1
             st.session_state.stress = ""
