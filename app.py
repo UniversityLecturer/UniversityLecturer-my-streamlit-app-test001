@@ -10,7 +10,7 @@ questions = [
     ("入社したら何がしたいですか？", "What would you like to do if you joined our company?")
 ]
 
-# フィードバック関数（日本語＋英語）
+# フィードバック関数
 def generate_feedback(question, answer):
     if "強み" in question:
         return (
@@ -43,33 +43,32 @@ if "step" not in st.session_state:
     st.session_state.step = 0
     st.session_state.answers = []
     st.session_state.feedbacks = []
-    st.session_state.last_input = ""
 
 st.title("就活準備チャット（アイコンなし）")
 
 step = st.session_state.step
 
-# 質問表示と回答入力
+# 回答が完了していないとき
 if step < len(questions):
     jp_q, en_q = questions[step]
 
-    st.markdown(f"**Q{step+1}:** {jp_q}  \n*{en_q}*", unsafe_allow_html=True)
-    user_input = st.text_input("あなたの答えを入力してください")
+    st.markdown(f"**Q{step+1}:** {jp_q}  \n*{en_q}*")
 
-    if st.button("送信する"):
-        if user_input.strip():
-            st.session_state.answers.append(user_input)
-            fb_jp, fb_en = generate_feedback(jp_q, user_input)
-            st.session_state.feedbacks.append((fb_jp, fb_en))
-            st.session_state.step += 1
-            st.session_state.last_input = ""
-            st.experimental_rerun()
-        else:
-            st.warning("入力してください。")
+    with st.form(key="answer_form"):
+        user_input = st.text_input("あなたの答えを入力してください")
+        submitted = st.form_submit_button("送信する")
 
-# 全質問後のまとめ表示
+    if submitted and user_input.strip():
+        st.session_state.answers.append(user_input)
+        fb_jp, fb_en = generate_feedback(jp_q, user_input)
+        st.session_state.feedbacks.append((fb_jp, fb_en))
+        st.session_state.step += 1
+        st.success("回答が記録されました。次の質問に進んでください。")
+    elif submitted:
+        st.warning("回答を入力してください。")
+
+# すべての質問が終了したらまとめを表示
 else:
-    st.markdown("---")
     st.header("あなたの就活プロフィールまとめ")
 
     for i in range(len(questions)):
@@ -88,6 +87,5 @@ else:
         )
 
     if st.button("最初からやり直す"):
-        for key in ["step", "answers", "feedbacks", "last_input"]:
-            st.session_state.pop(key, None)
+        st.session_state.clear()
         st.experimental_rerun()
