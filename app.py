@@ -38,36 +38,40 @@ def generate_feedback(question, answer):
             "Your idea is interesting. Giving more details will help others understand you better."
         )
 
-# セッションの初期化
+# セッション初期化
 if "step" not in st.session_state:
     st.session_state.step = 0
     st.session_state.answers = []
     st.session_state.feedbacks = []
+    st.session_state.last_input = ""
 
 st.title("就活準備チャット（アイコンなし）")
 
 step = st.session_state.step
 
-# 回答が完了していないとき
+# 質問の表示
 if step < len(questions):
     jp_q, en_q = questions[step]
 
     st.markdown(f"**Q{step+1}:** {jp_q}  \n*{en_q}*")
 
-    with st.form(key="answer_form"):
+    # 回答入力フォーム
+    with st.form(key="answer_form", clear_on_submit=True):  # 課題①：送信後にクリア
         user_input = st.text_input("あなたの答えを入力してください")
-        submitted = st.form_submit_button("送信する")
+        col1, col2 = st.columns([6, 1])  # 課題③：ボタン右寄せ
+        with col2:
+            submitted = st.form_submit_button("次へ")  # 文言変更
 
     if submitted and user_input.strip():
         st.session_state.answers.append(user_input)
         fb_jp, fb_en = generate_feedback(jp_q, user_input)
         st.session_state.feedbacks.append((fb_jp, fb_en))
         st.session_state.step += 1
-        st.success("回答が記録されました。次の質問に進んでください。")
+        st.success("回答が記録されました。")
     elif submitted:
-        st.warning("回答を入力してください。")
+        st.warning("入力してください。")
 
-# すべての質問が終了したらまとめを表示
+# すべての質問が完了したら結果まとめ
 else:
     st.header("あなたの就活プロフィールまとめ")
 
@@ -76,10 +80,10 @@ else:
         st.markdown(f"**Q{i+1}:** {jp_q}  \n*{en_q}*")
         st.markdown(
             f"""
-            <div style="background-color:#f0f2f6; padding:10px; border-radius:10px; margin-bottom:5px;">
+            <div style="background-color:#f0f2f6; padding:10px; border-radius:10px; margin-bottom:5px; color:#000;">
             <strong>あなたの回答:</strong><br>{st.session_state.answers[i]}
             </div>
-            <div style="background-color:#e2f4ea; padding:10px; border-radius:10px; margin-bottom:20px;">
+            <div style="background-color:#e2f4ea; padding:10px; border-radius:10px; margin-bottom:20px; color:#000;">
             <strong>フィードバック:</strong><br>{st.session_state.feedbacks[i][0]}<br><i>{st.session_state.feedbacks[i][1]}</i>
             </div>
             """,
@@ -87,5 +91,6 @@ else:
         )
 
     if st.button("最初からやり直す"):
-        st.session_state.clear()
+        for key in ["step", "answers", "feedbacks", "last_input"]:
+            st.session_state.pop(key, None)
         st.experimental_rerun()
