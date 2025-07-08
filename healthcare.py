@@ -18,8 +18,7 @@ if st.session_state.step == 1:
 
     col_left, _ = st.columns([1, 5])
     with col_left:
-        # horizontal=True を追加
-        stress = st.radio("あなたの回答を選んでください", ["yes", "no"], key="q1", horizontal=True)
+        stress = st.radio("あなたの回答を選んでください", ["yes", "no"], key="q1")
 
         if st.button("次へ", key="to_step2"):
             st.session_state.stress = stress
@@ -40,8 +39,7 @@ elif st.session_state.step == 2:
 
     col_left, _ = st.columns([1, 5])
     with col_left:
-        # horizontal=True を追加
-        sleep = st.radio("あなたの回答を選んでください", ["yes", "no"], key="q2", horizontal=True)
+        sleep = st.radio("あなたの回答を選んでください", ["yes", "no"], key="q2")
 
         if st.button("診断する", key="to_result"):
             st.session_state.sleep = sleep
