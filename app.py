@@ -44,7 +44,7 @@ if "step" not in st.session_state:
     st.session_state.answers = []
     st.session_state.feedbacks = []
 
-st.title("就活準備チャット（フォーム囲いなし）")
+st.title("Job hunting practice｜就活練習")
 
 step = st.session_state.step
 
