@@ -45,7 +45,7 @@ if "step" not in st.session_state:
     st.session_state.feedbacks = []
     st.session_state.last_input = ""
 
-st.title("就活準備チャットボット（チャット形式・英訳付き）")
+st.title("Job hunting practice")
 
 # 質問ステップの表示
 step = st.session_state.step
